@@ -7,6 +7,7 @@ class augment : public ofBaseApp{
 
 	public:
 
+		// OF Stuff
 		void setup();
 		void update();
 		void draw();
@@ -19,11 +20,16 @@ class augment : public ofBaseApp{
 		void mouseReleased(int x, int y, int button);
 		void resized(int w, int h);
 
-		void changeMovie();
-	
+		// Movie Stuff
+		void changeMovie();	
 		int movieIndex;
 		ofVideoPlayer * uclaVideos;
 		ofVideoPlayer * augmentVideos;	
+	
+		// Serial stuff
+		ofSerial serial;
+		int charIndex;
+		char * charsToSend;
 };
 
 #endif

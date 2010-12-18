@@ -1,14 +1,22 @@
 #include "augment.h"
 
 void augment::setup(){
+	// Set up OF
 	ofSetWindowTitle("Augment");
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	ofSetFrameRate(60);	
 	ofBackground(0, 0, 0);
-	
-	movieIndex = 0;
 
+	// Set up serial, replace with device name / baud to suit your config
+	serial.enumerateDevices();
+	serial.setup("/dev/tty.usbserial-A900aeQz", 115200);		
+	
+	charIndex = 0;
+	charsToSend = "LOGA";
+	
 	// Load the movies
+	movieIndex = 0;	
+	
 	uclaVideos = new ofVideoPlayer[2];
 	uclaVideos[0].loadMovie("ucla1_small.mov");
 	uclaVideos[1].loadMovie("ucla2_new.mov");
@@ -21,7 +29,7 @@ void augment::setup(){
 	uclaVideos[movieIndex].play();
 	augmentVideos[movieIndex].play();
 	
-	// TODO set up serial
+
 }
 
 
@@ -40,7 +48,14 @@ void augment::draw(){
 }
 
 void augment::changeMovie() {
-	// TODO send serial message
+	// TODO send serial message?
+	
+	// Bumb the character index
+	charIndex++;
+	
+	if (charIndex >= 4) {
+		charIndex = 0;
+	}
 	
 	// Stop current movies
 	uclaVideos[movieIndex].stop();
@@ -49,7 +64,7 @@ void augment::changeMovie() {
 	// Bump movie index
 	movieIndex++;
 	
-	if(movieIndex >= 2) {
+	if (movieIndex >= 2) {
 		movieIndex = 0;
 	}
 	
@@ -57,13 +72,28 @@ void augment::changeMovie() {
 	uclaVideos[movieIndex].play();
 	augmentVideos[movieIndex].play();
 	
-	ofLog(OF_LOG_NOTICE, "Changed to movie %i", movieIndex);	
+	ofLog(OF_LOG_NOTICE, "Changed to movie %i and sending char %c", movieIndex, charsToSend[charIndex]);	
 }
 
 
 void augment::keyPressed  (int key){
 	if (key == 'c') {
 		changeMovie();
+	}
+	else if (key == 'f') {
+		ofToggleFullscreen();
+	}
+  else if (key == 'l') {
+   serial.writeByte('L');
+	}
+	else if (key == 'o') {
+   serial.writeByte('O');
+	}
+	else if (key == 'g') {
+   serial.writeByte('G');
+	}
+	else if (key == 'a') {
+		serial.writeByte('A');
 	}
 }
 
